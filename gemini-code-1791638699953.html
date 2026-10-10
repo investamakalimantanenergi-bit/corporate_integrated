@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Holding Group | Integrated Corporate Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0f172a',
+                            900: '#0b1329',
+                            950: '#040712'
+                        },
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                        },
+                        amber: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'industrial-grid': "radial-gradient(circle, rgba(16, 185, 129, 0.08) 1px, transparent 1px)",
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0b1329;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        .industrial-bg {
+            background-color: #040712;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(37, 99, 235, 0.08) 0%, transparent 40%),
+                radial-gradient(circle, rgba(30, 41, 59, 0.4) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 32px 32px;
+        }
+        .gear-spin {
+            animation: spin 20s linear infinite;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="industrial-bg text-slate-100 font-sans min-h-screen flex flex-col selection:bg-emerald-500 selection:text-white">
+
+    <!-- Header / Navbar Utama -->
+    <header class="bg-slate-900/90 border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="goHome()">
+                    <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-600 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                        <i class="fa-solid font-bold text-white text-xl fa-gas-pump"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
+                            ENERGY HOLDING GROUP
+                            <span class="text-[10px] bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">Corp v2.8</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">Integrated Corporate Dashboard & Energy Trading</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Navigation Tabs -->
+                <nav class="hidden lg:flex space-x-1 bg-slate-950/60 p-1.5 rounded-xl border border-slate-800" id="desktopNav">
+                    <!-- Nav items populated via JS -->
+                </nav>
+
+                <!-- Auth & Mobile Action -->
+                <div class="flex items-center space-x-3">
+                    <div id="authArea">
+                        <!-- Auth button populated via JS -->
+                    </div>
+                    <div class="lg:hidden" id="mobileMenuContainer">
+                        <button id="mobileMenuBtn" class="p-2 rounded-lg bg-slate-800 text-slate-300 hover:text-white focus:outline-none">
+                            <i class="fa-solid fa-bars text-xl" id="menuIcon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div class="hidden lg:hidden border-t border-slate-800 bg-slate-900/95 backdrop-blur px-4 pt-2 pb-4 space-y-2" id="mobileNav">
+            <!-- Mobile nav items populated via JS -->
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Tab Content Placeholder -->
+        <div id="contentArea"></div>
+    </main>
+
+    <!-- Modal Login Multi-Admin -->
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-8 relative shadow-2xl fade-in overflow-hidden">
+            <div class="absolute -right-10 -top-10 text-emerald-500/10 pointer-events-none">
+                <i class="fa-solid fa-gear text-9xl gear-spin"></i>
+            </div>
+            
+            <button onclick="toggleLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white bg-slate-800/60 p-2 rounded-full transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6 relative z-10">
+                <div class="w-14 h-14 bg-gradient-to-tr from-emerald-600 to-blue-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-lg shadow-emerald-600/30">
+                    <i class="fa-solid fa-users-gear"></i>
+                </div>
+                <h3 class="text-xl font-extrabold text-white">Login Multi-Admin Korporat</h3>
+                <p class="text-xs text-slate-400 mt-1">Pilih profil admin atau masukkan kredensial resmi</p>
+            </div>
+
+            <form onsubmit="handleLogin(event)" class="space-y-4 relative z-10">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5"><i class="fa-solid fa-user-shield text-emerald-400 mr-1"></i> Pilih / Masukkan Akun Admin</label>
+                    <select id="adminSelect" onchange="fillAdminCredential(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-emerald-500 mb-2 transition">
+                        <option value="admin@energyholding.co.id">Admin Utama Sistem (Holding Admin)</option>
+                        <option value="direktur@energyholding.co.id">Direksi Eksekutif (Executive Admin)</option>
+                        <option value="logistik@energyholding.co.id">Kepala Logistik & Armada (Logistics Admin)</option>
+                    </select>
+                    <input type="email" id="loginEmail" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" value="admin@energyholding.co.id">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1.5"><i class="fa-solid fa-lock text-emerald-400 mr-1"></i> Kata Sandi</label>
+                    <input type="password" id="loginPassword" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition" value="password123">
+                </div>
+                <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1">
+                    <span class="text-emerald-400 font-medium">Sandi Default: password123</span>
+                    <a href="#" onclick="alert('Silakan hubungi Administrator IT Holding untuk reset kata sandi.'); return false;" class="text-slate-400 hover:text-emerald-400 hover:underline">Lupa sandi?</a>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-3 rounded-xl text-xs transition shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2">
+                    <span>Masuk ke Dashboard</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+            <div class="mt-6 pt-4 border-t border-slate-800/80 text-center text-[10px] text-slate-500">
+                <span>Energy Holding Group Secured Gateway &bull; Multi-Admin Enabled</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center sm:flex sm:justify-between sm:items-center text-xs text-slate-400">
+            <p>&copy; 2026 Energy Holding Group. Integrated Corporate Monitoring System.</p>
+            <p class="mt-2 sm:mt-0 flex items-center justify-center gap-2">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Sistem Operasional Terproteksi &bull; Diperbarui: <strong class="text-slate-200">Oktober 2026</strong></span>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // State Login & Manajemen Multi-Admin dan Riwayat
+        let isLoggedIn = false;
+        let activeTab = 'holding';
+        
+        let currentAdmin = {
+            name: 'Holding Administrator',
+            email: 'admin@energyholding.co.id',
+            role: 'Super Admin'
+        };
+
+        // Riwayat login terakhir disimpan dalam memori/localStorage sesi
+        let loginHistory = JSON.parse(localStorage.getItem('holding_login_history')) || [
+            { admin: 'Holding Administrator', email: 'admin@energyholding.co.id', time: '10 Oktober 2026, 08:30 WIB', status: 'Sesi Awal' }
+        ];
+
+        const adminProfiles = {
+            'admin@energyholding.co.id': { name: 'Holding Administrator', role: 'Super Admin' },
+            'direktur@energyholding.co.id': { name: 'Dr. Hendra Gunawan', role: 'Executive Director' },
+            'logistik@energyholding.co.id': { name: 'Ferry Kurniawan', role: 'Logistics & Fleet Manager' }
+        };
+
+        function fillAdminCredential(email) {
+            document.getElementById('loginEmail').value = email;
+        }
+
+        // Data Perusahaan & Holding Terupdate
+        const companiesData = {
+            holding: {
+                id: 'holding',
+                name: 'Holding Overview',
+                shortName: 'Holding Group',
+                tagline: 'Sinergi Distributor, Agen, dan Transportir BBM Industri Terpercaya',
+                badge: 'Group Synergy',
+                icon: 'fa-globe-asia',
+                color: 'from-blue-600 to-indigo-600',
+                stats: {
+                    companies: '3 Badan Usaha',
+                    totalUnits: '7 Unit Armada',
+                    sectors: 'Trading, Agen & Transportir',
+                    workforce: '250+ Karyawan',
+                    compliance: '100% Legal & Licensed',
+                    esgScore: 'A (85/100)'
+                },
+                summary: 'Energy Holding Group mengoordinasikan tiga anak perusahaan strategis yang berfokus pada penyediaan, keagenan, serta transportasi logistik BBM Solar Industri di Indonesia. Bermitra dengan principal terkemuka seperti PT Petro Andalan Nusantara dan PT Ocean Indonesia Energy.',
+                operatingAreas: [
+                    { 
+                        id: 'kse',
+                        name: 'PT. Khatulistiwa Sinar Energi', 
+                        focus: 'Trading BBM Solar', 
+                        partner: 'Support Supply: PT Ocean Indonesia Energy', 
+                        desc: 'Berfokus pada penyediaan dan trading komoditas BBM Solar industri berskala besar dengan dukungan rantai pasok dari PT Ocean Indonesia Energy.',
+                        color: 'emerald',
+                        image: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80'
+                    },
+                    { 
+                        id: 'ike',
+                        name: 'PT. Investama Kalimantan Energi', 
+                        focus: 'Agen Resmi BBM Solar Industri', 
+                        partner: 'Principal: PT Petro Andalan Nusantara', 
+                        desc: 'Berperan sebagai agen resmi penyaluran BBM solar industri dengan armada pendukung 3 unit truk tangki berkapasitas masing-masing 5.000 liter.',
+                        color: 'amber',
+                        image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&auto=format&fit=crop&q=80'
+                    },
+                    { 
+                        id: 'ide',
+                        name: 'PT. Indo Dharma Energi', 
+                        focus: 'Transportir BBM Industri', 
+                        partner: 'Armada Logistik Terintegrasi', 
+                        desc: 'Perusahaan khusus penyedia jasa transportasi/transportir BBM industri dengan variasi armada tangki lengkap: 5.000 liter, 8.000 liter, dan 10.000 liter.',
+                        color: 'blue',
+                        image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80'
+                    }
+                ]
+            },
+            kse: {
+                id: 'kse',
+                name: 'PT. Khatulistiwa Sinar Energi',
+                shortName: 'Khatulistiwa Sinar Energi',
+                tagline: 'Trading & Penyediaan BBM Solar Industri Berkualitas',
+                badge: 'Trading Division',
+                icon: 'fa-sun',
+                accentColor: 'emerald',
+                heroImage: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1200&auto=format&fit=crop&q=80',
+                stats: {
+                    businessType: 'Trading BBM Solar',
+                    supportPartner: 'PT Ocean Indonesia Energy',
+                    operationalArea: 'Skala Nasional / Regional',
+                    workforce: '85 Karyawan',
+                    status: 'Active Commercial'
+                },
+                sector: 'Trading & Supply Chain BBM Solar Industri',
+                location: 'Head Office: Pontianak | Hub Logistik: Kalimantan & Sekitarnya',
+                vision: 'Menjadi perusahaan trading dan penyedia energi BBM industri yang paling handal dan terpercaya di Indonesia.',
+                mission: 'Menjamin ketersediaan pasokan solar industri tepat waktu, menjalin aliansi strategis yang kuat dengan penyedia utama seperti PT Ocean Indonesia Energy, serta memberikan layanan terbaik bagi kepuasan pelanggan.',
+                leaders: [
+                    { name: 'Dr. Ir. Hendra Gunawan', role: 'Direktur Utama', photo: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Siti Rahmawati, M.Sc', role: 'Direktur Komersial & Trading', photo: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Budi Santoso, CFA', role: 'Direktur Keuangan', photo: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80' }
+                ],
+                projects: [
+                    { name: 'Supply Kontrak Industri Sawit Kalbar', location: 'Kalimantan Barat', status: 'Aktif', capacity: 'Volume Reguler', date: 'Berjalan' },
+                    { name: 'Kerjasama Strategis Supply Chain', location: 'Jakarta / Nasional', status: 'Selesai', capacity: 'PT Ocean Indonesia Energy', date: '2025/2026' },
+                    { name: 'Pengembangan Hub Distribusi Regional', location: 'Pontianak & Ketapang', status: 'Dalam Perluasan', capacity: 'Bulk Storage', date: '2026' }
+                ],
+                milestones: [
+                    { year: '2026', text: 'Perluasan kontrak pasokan bersama PT Ocean Indonesia Energy untuk sektor pertambangan dan perkebunan.' },
+                    { year: '2025', text: 'Penguatan sistem manajemen mutu dan legalitas perizinan trading komoditas energi.' },
+                    { year: '2024', text: 'Pendirian divisi trading khusus BBM solar industri berskala menengah-besar.' }
+                ],
+                contact: {
+                    address: 'Jl. Ahmad Yani No. 88, Pontianak, Kalimantan Barat 78124',
+                    email: 'info@khatulistiwasinar.co.id',
+                    phone: '+62 561 734 900',
+                    website: 'www.khatulistiwasinar.co.id'
+                }
+            },
+            ike: {
+                id: 'ike',
+                name: 'PT. Investama Kalimantan Energi',
+                shortName: 'Investama Kalimantan Energi',
+                tagline: 'Agen Resmi BBM Solar Industri - PT Petro Andalan Nusantara',
+                badge: 'Agency Division',
+                icon: 'fa-handshake',
+                accentColor: 'amber',
+                heroImage: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=1200&auto=format&fit=crop&q=80',
+                stats: {
+                    businessType: 'Agen Resmi BBM Solar Industri',
+                    principal: 'PT Petro Andalan Nusantara',
+                    fleetUnit: '3 Unit Truk Tangki',
+                    capacityPerUnit: '5.000 Liter / Unit',
+                    totalCapacity: '15.000 Liter Sekali Jalan'
+                },
+                sector: 'Keagenan & Distribusi BBM Solar Industri',
+                location: 'Head Office: Balikpapan | Area Ops: Kalimantan Timur & Selatan',
+                vision: 'Menjadi agen penyalur BBM solar industri terdepan yang mengedepankan ketepatan volume, legalitas, dan kualitas pelayanan.',
+                mission: 'Menjalankan fungsi keagenan resmi berstandar tinggi bekerja sama dengan PT Petro Andalan Nusantara, menyediakan armada tangki yang prima, serta mengutamakan keselamatan kerja (HSSE).',
+                leaders: [
+                    { name: 'Drs. Bambang Wijaya', role: 'Direktur Utama', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Ir. Ahmad Zulkarnaen', role: 'Direktur Operasional Agen', photo: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Maya Indah, SE, M.M', role: 'Direktur Administrasi & Legal', photo: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80' }
+                ],
+                projects: [
+                    { name: 'Operasional Armada Tangki Agen (3 Unit)', location: 'Balikpapan & Sekitarnya', status: 'Aktif Operasional', capacity: 'Masing-masing 5.000 Liter', date: 'Rutin Harian' },
+                    { name: 'Kemitraan Resmi PT Petro Andalan Nusantara', location: 'Kalimantan Timur', status: 'Berjalan', capacity: 'Distribusi Agen Resmi', date: '2025 - Sekarang' },
+                    { name: 'Penyaluran Sektor Konstruksi & Manufaktur', location: 'Samarinda & Penajam', status: 'Aktif', capacity: 'Reguler Supply', date: 'Berjalan' }
+                ],
+                milestones: [
+                    { year: '2026', text: 'Optimalisasi peremajaan dan perawatan armada 3 unit tangki 5.000 liter untuk ketepatan jadwal kirim.' },
+                    { year: '2025', text: 'Pengukuhan kerjasama resmi sebagai agen terdaftar PT Petro Andalan Nusantara.' },
+                    { year: '2024', text: 'Perluasan jangkauan layanan keagenan solar industri di kawasan industri Kalimantan Timur.' }
+                ],
+                contact: {
+                    address: 'Kawasan Industri Kariangau No. 12, Balikpapan, Kaltim 76115',
+                    email: 'corporate@investamakaltim.co.id',
+                    phone: '+62 542 881 223',
+                    website: 'www.investamakaltim.co.id'
+                }
+            },
+            ide: {
+                id: 'ide',
+                name: 'PT. Indo Dharma Energi',
+                shortName: 'Indo Dharma Energi',
+                tagline: 'Spesialis Transportir & Logistik Angkutan BBM Industri',
+                badge: 'Logistics & Transport',
+                icon: 'fa-truck-moving',
+                accentColor: 'blue',
+                heroImage: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1200&auto=format&fit=crop&q=80',
+                stats: {
+                    businessType: 'Transportir BBM Industri',
+                    fleetComposition: '3 Varian Kapasitas',
+                    unitDetail: '5.000 L, 8.000 L, & 10.000 L',
+                    safetyRecord: 'Zero Accident Compliant',
+                    coverage: 'Inter-region Logistics'
+                },
+                sector: 'Jasa Transportasi & Transportir BBM Industri',
+                location: 'Head Office: Jakarta Pusat | Pool Logistik: Jabar, Banten, Jatim',
+                vision: 'Menjadi perusahaan transportir BBM industri paling aman, tepat waktu, dan berstandar keselamatan tinggi di Indonesia.',
+                mission: 'Memberikan layanan logistik pengangkutan bahan bakar minyak industri dengan armada truk tangki berbagai kapasitas (5.000, 8.000, dan 10.000 liter) yang memenuhi standar metrologi dan HSSE.',
+                leaders: [
+                    { name: 'Ir. Taufik Hidayat, M.T', role: 'Direktur Utama', photo: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Diana Putri, S.T., MBA', role: 'Direktur Armada & Logistik', photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80' },
+                    { name: 'Ferry Kurniawan', role: 'Direktur HSSE & Kepatuhan', photo: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150&auto=format&fit=crop&q=80' }
+                ],
+                projects: [
+                    { name: 'Armada Tangki Transportir 5.000 Liter', location: 'Jabodetabek & Jabar', status: 'Siap Operasi', capacity: '5.000 Liter', date: 'Standby' },
+                    { name: 'Armada Tangki Transportir 8.000 Liter', location: 'Koridor Industri Cikarang', status: 'Siap Operasi', capacity: '8.000 Liter', date: 'Standby' },
+                    { name: 'Armada Tangki Transportir 10.000 Liter', location: 'Jawa Bagian Timur', status: 'Siap Operasi', capacity: '10.000 Liter', date: 'Standby' },
+                    { name: 'Kontrak Layanan Logistik Korporat', location: 'Nasional', status: 'Aktif Berjalan', capacity: 'Full Fleet Support', date: '2026' }
+                ],
+                milestones: [
+                    { year: '2026', text: 'Penambahan sertifikasi kelayakan tangki berkala untuk unit 5.000L, 8.000L, dan 10.000L.' },
+                    { year: '2025', text: 'Pencapaian rekor operasional pengiriman logistik BBM tanpa kendala (Zero Loss Time Injury).' },
+                    { year: '2024', text: 'Peresmian pool armada khusus transportir BBM industri terintegrasi.' }
+                ],
+                contact: {
+                    address: 'Gedung Wisma Dharma Lt. 18, Jl. Jend. Sudirman, Jakarta Pusat 10220',
+                    email: 'contact@indodharmaenergi.co.id',
+                    phone: '+62 21 5790 1200',
+                    website: 'www.indodharmaenergi.co.id'
+                }
+            }
+        };
+
+        function goHome() {
+            activeTab = 'holding';
+            renderNav();
+            renderAuthUI();
+            renderContent();
+        }
+
+        function renderNav() {
+            const desktopNav = document.getElementById('desktopNav');
+            const mobileNav = document.getElementById('mobileNav');
+
+            if (!isLoggedIn) {
+                desktopNav.innerHTML = `
+                    <div class="px-4 py-1.5 text-xs text-emerald-400 font-semibold flex items-center space-x-2">
+                        <i class="fa-solid fa-lock text-xs mr-1"></i>
+                        <span>Corporate Portal (Secured Public View)</span>
+                    </div>
+                `;
+                mobileNav.innerHTML = `
+                    <div class="px-4 py-2 text-xs text-emerald-400 font-semibold flex items-center space-x-1">
+                        <i class="fa-solid fa-lock"></i>
+                        <span>Corporate Portal (Secured)</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const navItems = [
+                { id: 'holding', name: 'Overview Holding', icon: 'fa-network-wired' },
+                { id: 'kse', name: 'PT Khatulistiwa Sinar', icon: 'fa-sun' },
+                { id: 'ike', name: 'PT Investama Kalimantan', icon: 'fa-handshake' },
+                { id: 'ide', name: 'PT Indo Dharma Energi', icon: 'fa-truck-moving' }
+            ];
+
+            desktopNav.innerHTML = navItems.map(item => `
+                <button onclick="switchTab('${item.id}')" 
+                    class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === item.id 
+                        ? 'bg-slate-800 text-white shadow-sm border border-slate-700' 
+                        : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'
+                    }">
+                    <i class="fa-solid ${item.icon} ${activeTab === item.id ? 'text-emerald-400' : ''}"></i>
+                    <span>${item.name}</span>
+                </button>
+            `).join('');
+
+            mobileNav.innerHTML = navItems.map(item => `
+                <button onclick="switchTab('${item.id}'); toggleMobileMenu();" 
+                    class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                        activeTab === item.id 
+                        ? 'bg-slate-800 text-white border-l-4 border-emerald-500' 
+                        : 'text-slate-400 hover:bg-slate-800/50'
+                    }">
+                    <i class="fa-solid ${item.icon} w-5 text-emerald-400"></i>
+                    <span>${item.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderAuthUI() {
+            const authArea = document.getElementById('authArea');
+            if (isLoggedIn) {
+                authArea.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="hidden sm:block text-right">
+                            <div class="text-xs font-bold text-white">${currentAdmin.name}</div>
+                            <div class="text-[10px] text-emerald-400">${currentAdmin.role}</div>
+                        </div>
+                        <button onclick="handleLogout()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/30 text-rose-400 transition flex items-center space-x-1.5 shadow-lg shadow-rose-500/10">
+                            <i class="fa-solid fa-right-from-bracket"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                `;
+            } else {
+                authArea.innerHTML = `
+                    <button onclick="toggleLoginModal()" class="px-5 py-2.5 rounded-xl text-xs font-bold bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white transition flex items-center space-x-2 shadow-xl shadow-emerald-600/30 transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        <span>Login Sistem</span>
+                    </button>
+                `;
+            }
+        }
+
+        function toggleLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.classList.toggle('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail').value;
+            
+            if (adminProfiles[emailInput]) {
+                currentAdmin = {
+                    name: adminProfiles[emailInput].name,
+                    email: emailInput,
+                    role: adminProfiles[emailInput].role
+                };
+            } else {
+                currentAdmin = {
+                    name: 'Custom Admin',
+                    email: emailInput,
+                    role: 'Administrator'
+                };
+            }
+
+            isLoggedIn = true;
+            
+            // Catat riwayat login
+            const now = new Date();
+            const timeString = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + ' WIB';
+            
+            loginHistory.unshift({
+                admin: currentAdmin.name,
+                email: currentAdmin.email,
+                time: timeString,
+                status: 'Berhasil Masuk'
+            });
+            
+            if (loginHistory.length > 5) loginHistory.pop(); // Batasi 5 riwayat terakhir
+            localStorage.setItem('holding_login_history', JSON.stringify(loginHistory));
+
+            toggleLoginModal();
+            renderNav();
+            renderAuthUI();
+            renderContent();
+        }
+
+        function handleLogout() {
+            isLoggedIn = false;
+            activeTab = 'holding';
+            renderNav();
+            renderAuthUI();
+            renderContent();
+        }
+
+        function toggleMobileMenu() {
+            const mobileNav = document.getElementById('mobileNav');
+            mobileNav.classList.toggle('hidden');
+        }
+
+        document.getElementById('mobileMenuBtn').addEventListener('click', toggleMobileMenu);
+
+        function switchTab(tabId) {
+            if (!isLoggedIn) {
+                toggleLoginModal();
+                return;
+            }
+            activeTab = tabId;
+            renderNav();
+            renderContent();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderContent() {
+            const container = document.getElementById('contentArea');
+            
+            if (!isLoggedIn) {
+                container.innerHTML = renderModernLandingPage();
+                return;
+            }
+
+            const data = companiesData[activeTab];
+            if (activeTab === 'holding') {
+                container.innerHTML = renderHoldingView(data);
+            } else {
+                container.innerHTML = renderCompanyView(data);
+            }
+        }
+
+        function renderModernLandingPage() {
+            return `
+                <div class="fade-in space-y-16 pb-12">
+                    <!-- Hero Section -->
+                    <div class="relative rounded-3xl overflow-hidden bg-gradient-to-b from-slate-900 via-slate-900/90 to-slate-950 border border-slate-800 p-8 sm:p-14 shadow-2xl">
+                        <div class="absolute right-[-5%] top-[-10%] text-emerald-500/5 pointer-events-none select-none">
+                            <i class="fa-solid fa-gear text-[350px] gear-spin"></i>
+                        </div>
+                        <div class="absolute left-[-5%] bottom-[-20%] text-blue-500/5 pointer-events-none select-none">
+                            <i class="fa-solid fa-network-wired text-[300px]"></i>
+                        </div>
+
+                        <div class="relative z-10 max-w-3xl space-y-6">
+                            <div class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold tracking-wide">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <span>Official Energy Holding Group Secured Portal</span>
+                            </div>
+                            <h1 class="text-4xl sm:text-6xl font-black text-white tracking-tight leading-tight">
+                                Sinergi Energi & <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-blue-500">Logistik Industri Nasional</span>
+                            </h1>
+                            <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                                Pusat kendali korporat terintegrasi untuk tiga pilar badan usaha strategis: Penyediaan Trading BBM, Keagenan Resmi Nasional, dan Transportir Logistik Energi berstandar keselamatan tinggi.
+                            </p>
+                            
+                            <div class="flex flex-wrap gap-4 pt-2">
+                                <button onclick="toggleLoginModal()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold text-sm transition shadow-xl shadow-emerald-600/30 flex items-center space-x-3 transform hover:-translate-y-0.5">
+                                    <i class="fa-solid fa-right-to-bracket text-base"></i>
+                                    <span>Login Multi-Admin</span>
+                                </button>
+                                <a href="#galeriPT" class="px-7 py-4 rounded-2xl bg-slate-800/80 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-sm transition flex items-center space-x-2 backdrop-blur-sm">
+                                    <i class="fa-solid fa-images text-emerald-400"></i>
+                                    <span>Eksplor Galeri 3 Badan Usaha</span>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Quick Highlights Grid -->
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t border-slate-800/80 relative z-10">
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+                                <div class="text-xs text-slate-400">Badan Usaha</div>
+                                <div class="text-xl font-extrabold text-white mt-1">3 PT</div>
+                                <div class="text-[10px] text-emerald-400 mt-0.5">Terintegrasi Holding</div>
+                            </div>
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+                                <div class="text-xs text-slate-400">Armada Logistik</div>
+                                <div class="text-xl font-extrabold text-emerald-400 mt-1">7 Unit</div>
+                                <div class="text-[10px] text-slate-400 mt-0.5">Kapasitas 5k-10k Liter</div>
+                            </div>
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+                                <div class="text-xs text-slate-400">Mitra Principal</div>
+                                <div class="text-xl font-extrabold text-blue-400 mt-1">Tier-1</div>
+                                <div class="text-[10px] text-slate-400 mt-0.5">Pertamina & Partners</div>
+                            </div>
+                            <div class="bg-slate-950/50 p-4 rounded-xl border border-slate-800/80">
+                                <div class="text-xs text-slate-400">Standar HSSE</div>
+                                <div class="text-xl font-extrabold text-amber-400 mt-1">Zero Acc</div>
+                                <div class="text-[10px] text-emerald-400 mt-0.5">High Compliance</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Galeri Gambar & Profil 3 PT -->
+                    <div id="galeriPT" class="space-y-6 pt-6">
+                        <div class="text-center max-w-2xl mx-auto space-y-2">
+                            <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">Galeri Korporat</span>
+                            <h2 class="text-2xl sm:text-3xl font-extrabold text-white">Tiga Pilar Badan Usaha Holding</h2>
+                            <p class="text-xs sm:text-sm text-slate-400">Eksplorasi visual aktivitas operasional dan sektor layanan dari masing-masing perusahaan di bawah naungan Energy Holding Group.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+                            <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden group hover:border-emerald-500/50 transition duration-300 flex flex-col justify-between shadow-xl">
+                                <div>
+                                    <div class="relative h-56 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=600&auto=format&fit=crop&q=80" alt="KSE" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <span class="absolute top-4 left-4 bg-emerald-500/90 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">Trading Division</span>
+                                    </div>
+                                    <div class="p-6 space-y-3">
+                                        <h3 class="text-lg font-bold text-white">PT. Khatulistiwa Sinar Energi</h3>
+                                        <p class="text-xs font-semibold text-emerald-400">Trading & Penyediaan BBM Solar Industri</p>
+                                        <p class="text-xs text-slate-300 leading-relaxed">Berfokus pada penyediaan dan trading komoditas BBM Solar industri skala besar dengan dukungan PT Ocean Indonesia Energy.</p>
+                                    </div>
+                                </div>
+                                <div class="p-6 pt-0">
+                                    <button onclick="requestLoginForCompany('kse')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2 border border-slate-700">
+                                        <i class="fa-solid fa-lock text-emerald-400 text-[10px]"></i>
+                                        <span>Login untuk Buka Profil PT</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden group hover:border-amber-500/50 transition duration-300 flex flex-col justify-between shadow-xl">
+                                <div>
+                                    <div class="relative h-56 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&auto=format&fit=crop&q=80" alt="IKE" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <span class="absolute top-4 left-4 bg-amber-500/90 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">Agency Division</span>
+                                    </div>
+                                    <div class="p-6 space-y-3">
+                                        <h3 class="text-lg font-bold text-white">PT. Investama Kalimantan Energi</h3>
+                                        <p class="text-xs font-semibold text-amber-400">Agen Resmi BBM Solar Industri</p>
+                                        <p class="text-xs text-slate-300 leading-relaxed">Berperan sebagai agen resmi penyaluran BBM solar industri bermitra dengan PT Petro Andalan Nusantara (3 unit tangki).</p>
+                                    </div>
+                                </div>
+                                <div class="p-6 pt-0">
+                                    <button onclick="requestLoginForCompany('ike')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2 border border-slate-700">
+                                        <i class="fa-solid fa-lock text-amber-400 text-[10px]"></i>
+                                        <span>Login untuk Buka Profil PT</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden group hover:border-blue-500/50 transition duration-300 flex flex-col justify-between shadow-xl">
+                                <div>
+                                    <div class="relative h-56 overflow-hidden">
+                                        <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600&auto=format&fit=crop&q=80" alt="IDE" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
+                                        <span class="absolute top-4 left-4 bg-blue-500/90 text-white text-[10px] font-bold px-3 py-1 rounded-full backdrop-blur-sm">Logistics & Transport</span>
+                                    </div>
+                                    <div class="p-6 space-y-3">
+                                        <h3 class="text-lg font-bold text-white">PT. Indo Dharma Energi</h3>
+                                        <p class="text-xs font-semibold text-blue-400">Spesialis Transportir & Logistik BBM</p>
+                                        <p class="text-xs text-slate-300 leading-relaxed">Perusahaan khusus penyedia jasa transportir BBM industri dengan variasi kapasitas tangki 5kL, 8kL, dan 10kL.</p>
+                                    </div>
+                                </div>
+                                <div class="p-6 pt-0">
+                                    <button onclick="requestLoginForCompany('ide')" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold transition flex items-center justify-center space-x-2 border border-slate-700">
+                                        <i class="fa-solid fa-lock text-blue-400 text-[10px]"></i>
+                                        <span>Login untuk Buka Profil PT</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function requestLoginForCompany(companyId) {
+            activeTab = companyId;
+            toggleLoginModal();
+        }
+
+        function renderHoldingView(data) {
+            let historyHTML = loginHistory.map((item, idx) => `
+                <div class="flex items-center justify-between py-2.5 px-4 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <span class="font-bold text-white">${item.admin}</span>
+                            <span class="text-slate-400 text-[11px] block">${item.email}</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-emerald-400 font-semibold">${item.time}</span>
+                        <span class="text-[10px] text-slate-500 block">${idx === 0 ? 'Aktivitas Terakhir (Aktif)' : 'Riwayat Sesi'}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            return `
+                <div class="fade-in space-y-8">
+                    <!-- Holding Hero Banner -->
+                    <div class="bg-gradient-to-r ${data.color} rounded-3xl p-6 sm:p-10 text-white relative overflow-hidden shadow-2xl">
+                        <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
+                            <i class="fa-solid fa-globe-asia text-[280px]"></i>
+                        </div>
+                        <div class="relative z-10 max-w-3xl">
+                            <span class="inline-block px-3.5 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-semibold mb-3 tracking-wide">
+                                ${data.badge} &bull; Login as: ${currentAdmin.name} (${currentAdmin.role})
+                            </span>
+                            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-3">${data.name}</h2>
+                            <p class="text-blue-100 text-base sm:text-lg mb-6">${data.tagline}</p>
+                            <p class="text-xs sm:text-sm text-slate-100 leading-relaxed bg-black/20 p-5 rounded-2xl backdrop-blur-sm border border-white/10">
+                                ${data.summary}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Panel Riwayat Login Terakhir (Sesuai Permintaan) -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-emerald-400"></i> Riwayat & Log Aktivitas Login Admin
+                            </h3>
+                            <span class="text-[10px] bg-slate-800 text-slate-300 px-3 py-1 rounded-full border border-slate-700">Multi-Admin Secured</span>
+                        </div>
+                        <div class="space-y-2.5">
+                            ${historyHTML}
+                        </div>
+                    </div>
+
+                    <!-- Holding Key Info Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">Struktur Group</span>
+                            <div class="mt-2 text-base font-bold text-white">${data.stats.companies}</div>
+                            <span class="text-[10px] text-emerald-400 mt-1">Terintegrasi Penuh</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">Armada Utama</span>
+                            <div class="mt-2 text-base font-bold text-emerald-400">${data.stats.totalUnits}</div>
+                            <span class="text-[10px] text-slate-400 mt-1">Siap Operasi</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">Fokus Layanan</span>
+                            <div class="mt-2 text-sm font-bold text-white">${data.stats.sectors}</div>
+                            <span class="text-[10px] text-blue-400 mt-1">BBM Solar Industri</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">SDM & Personel</span>
+                            <div class="mt-2 text-base font-bold text-amber-400">${data.stats.workforce}</div>
+                            <span class="text-[10px] text-slate-400 mt-1">Profesional</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">Legalitas & Izin</span>
+                            <div class="mt-2 text-xs font-bold text-white">${data.stats.compliance}</div>
+                            <span class="text-[10px] text-emerald-400 mt-1">Verified Legal</span>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col justify-between">
+                            <span class="text-xs text-slate-400 font-medium">Standar Tata Kelola</span>
+                            <div class="mt-2 text-base font-bold text-emerald-400">${data.stats.esgScore}</div>
+                            <span class="text-[10px] text-emerald-400 mt-1">High Compliance</span>
+                        </div>
+                    </div>
+
+                    <!-- Operating Companies Mapping Cards -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
+                        <h3 class="text-lg font-bold text-white mb-1">Profil Anak Perusahaan & Relasi Strategis</h3>
+                        <p class="text-xs text-slate-400 mb-6">Klik tombol pada card atau navigasi atas untuk membuka dashboard operasional mendetail</p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            ${data.operatingAreas.map(op => `
+                                <div class="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition group shadow-lg">
+                                    <div>
+                                        <div class="h-40 overflow-hidden relative">
+                                            <img src="${op.image}" alt="${op.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                                        </div>
+                                        <div class="p-5 space-y-3">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 rounded-lg bg-${op.color}-500/20 text-${op.color}-400 flex items-center justify-center font-bold text-sm">
+                                                    <i class="fa-solid fa-building"></i>
+                                                </div>
+                                                <h4 class="font-bold text-sm text-white">${op.name}</h4>
+                                            </div>
+                                            <div class="space-y-1.5 text-xs">
+                                                <div class="text-slate-300 font-medium bg-slate-900 p-2.5 rounded-xl border border-slate-800">
+                                                    <span class="text-slate-500 block text-[10px]">BIDANG USAHA:</span>
+                                                    ${op.focus}
+                                                </div>
+                                                <div class="text-emerald-400 font-medium px-1">
+                                                    <i class="fa-solid fa-link mr-1"></i> ${op.partner}
+                                                </div>
+                                            </div>
+                                            <p class="text-xs text-slate-400 leading-relaxed">${op.desc}</p>
+                                        </div>
+                                    </div>
+                                    <div class="p-5 pt-0">
+                                        <button onclick="switchTab('${op.id}')" class="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-emerald-400 text-xs font-bold transition border border-slate-800 flex items-center justify-center space-x-2">
+                                            <span>Buka Dashboard ${op.name.split('.')[1] || ''}</span>
+                                            <i class="fa-solid fa-arrow-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCompanyView(data) {
+            const isEmerald = data.accentColor === 'emerald';
+            const isAmber = data.accentColor === 'amber';
+            
+            const badgeBg = isEmerald ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' : 
+                            isAmber ? 'bg-amber-500/20 text-amber-400 border-amber-500/30' : 
+                            'bg-blue-500/20 text-blue-400 border-blue-500/30';
+
+            const accentText = isEmerald ? 'text-emerald-400' : isAmber ? 'text-amber-400' : 'text-blue-400';
+            const accentBg = isEmerald ? 'bg-emerald-500' : isAmber ? 'bg-amber-500' : 'bg-blue-500';
+
+            let transactionMenusHTML = `
+                <div class="mt-6 pt-6 border-t border-slate-800">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-shield-halved mr-1"></i> Menu Operasional & Transaksi (${currentAdmin.name})</span>
+                        <span class="text-[10px] bg-emerald-500/10 text-emerald-400 px-2.5 py-0.5 rounded-full border border-emerald-500/20 font-medium">Akses Terbuka</span>
+                    </div>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2.5">
+                        <a href="#" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-cash-register text-emerald-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Penjualan</span>
+                        </a>
+                        <a href="#" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-truck text-blue-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Pengiriman</span>
+                        </a>
+                        <a href="po.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-cart-shopping text-amber-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Purchase Order</span>
+                        </a>
+                        <a href="po.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-circle-plus text-emerald-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Buat PO</span>
+                        </a>
+                        <a href="penawaran.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-file-lines text-indigo-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Penawaran</span>
+                        </a>
+                        <a href="penawaran.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-file-circle-plus text-indigo-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Buat Penawaran</span>
+                        </a>
+                        <a href="invoice.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-receipt text-rose-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Invoice</span>
+                        </a>
+                        <a href="invoice.html" class="flex flex-col items-center justify-center p-3 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-800 text-center transition group">
+                            <i class="fa-solid fa-file-invoice-dollar text-emerald-400 text-base mb-1.5 group-hover:scale-110 transition"></i>
+                            <span class="text-[11px] font-semibold text-slate-200">Buat Invoice</span>
+                        </a>
+                    </div>
+                </div>
+            `;
+
+            return `
+                <div class="fade-in space-y-8">
+                    <!-- Company Hero Header -->
+                    <div class="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden relative shadow-2xl">
+                        <div class="h-48 sm:h-64 relative overflow-hidden">
+                            <img src="${data.heroImage}" alt="${data.name}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
+                            <div class="absolute top-4 left-4 flex items-center space-x-2">
+                                <button onclick="goHome()" class="px-3 py-1.5 bg-slate-950/80 hover:bg-slate-900 text-white rounded-xl text-xs font-semibold backdrop-blur-md border border-slate-800 transition flex items-center space-x-1.5">
+                                    <i class="fa-solid fa-arrow-left"></i>
+                                    <span>Kembali ke Holding</span>
+                                </button>
+                            </div>
+                            <div class="absolute top-4 right-4">
+                                <span class="px-3.5 py-1.5 rounded-full text-xs font-bold border ${badgeBg} backdrop-blur-md">
+                                    ${data.badge}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-6 sm:p-8 -mt-16 relative z-10">
+                            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                                <div class="space-y-3 max-w-3xl">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="text-xs text-slate-300 bg-slate-950/80 px-3 py-1 rounded-lg border border-slate-800"><i class="fa-solid fa-location-dot text-rose-500 mr-1"></i> ${data.location}</span>
+                                    </div>
+                                    <h2 class="text-2xl sm:text-4xl font-extrabold text-white">${data.name}</h2>
+                                    <p class="text-sm ${accentText} font-semibold">${data.tagline}</p>
+                                    <p class="text-xs text-slate-300 leading-relaxed pt-1">
+                                        <strong class="text-white">Klasifikasi:</strong> ${data.sector}
+                                    </p>
+                                </div>
+                                <div class="flex flex-col items-center justify-center p-4 bg-slate-950 rounded-2xl border border-slate-800 min-w-[180px] shadow-lg">
+                                    <i class="fa-solid ${data.icon} text-3xl ${accentText} mb-1.5"></i>
+                                    <span class="text-xs text-slate-400 font-medium">Status Entitas</span>
+                                    <span class="text-xs text-emerald-400 font-bold mt-0.5"><i class="fa-solid fa-circle-check"></i> Aktif Beroperasi</span>
+                                </div>
+                            </div>
+
+                            ${transactionMenusHTML}
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 pt-6 border-t border-slate-800">
+                                <div class="bg-slate-950/60 p-4 sm:p-5 rounded-2xl border border-slate-800/80">
+                                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-eye text-indigo-400"></i> Visi Perusahaan</h4>
+                                    <p class="text-xs text-slate-300 italic leading-relaxed">"${data.vision}"</p>
+                                </div>
+                                <div class="bg-slate-950/60 p-4 sm:p-5 rounded-2xl border border-slate-800/80">
+                                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-1.5 flex items-center gap-1.5"><i class="fa-solid fa-bullseye text-indigo-400"></i> Misi Perusahaan</h4>
+                                    <p class="text-xs text-slate-300 leading-relaxed">"${data.mission}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                            <div class="text-xs text-slate-400 font-medium">Jenis Usaha</div>
+                            <div class="text-sm font-bold text-white mt-1">${data.stats.businessType || data.stats.capacity}</div>
+                            <div class="text-[10px] text-slate-500 mt-1">Core Business</div>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                            <div class="text-xs text-slate-400 font-medium">Mitra / Principal Utama</div>
+                            <div class="text-sm font-bold ${accentText} mt-1">${data.stats.supportPartner || data.stats.principal || data.stats.fleetComposition}</div>
+                            <div class="text-[10px] text-emerald-400 mt-1"><i class="fa-solid fa-handshake"></i> Terverifikasi</div>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                            <div class="text-xs text-slate-400 font-medium">Armada / Unit Tangki</div>
+                            <div class="text-sm font-bold text-white mt-1">${data.stats.fleetUnit || data.stats.unitDetail || data.stats.operationalArea}</div>
+                            <div class="text-[10px] text-slate-500 mt-1">Spesifikasi Unit</div>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4">
+                            <div class="text-xs text-slate-400 font-medium">Kapasitas Satuan</div>
+                            <div class="text-sm font-bold text-white mt-1">${data.stats.capacityPerUnit || data.stats.totalCapacity || data.stats.workforce}</div>
+                            <div class="text-[10px] text-slate-500 mt-1">Skala Angkut</div>
+                        </div>
+                        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 col-span-2 sm:col-span-1">
+                            <div class="text-xs text-slate-400 font-medium">Status Kepatuhan</div>
+                            <div class="text-sm font-bold text-emerald-400 mt-1">${data.stats.status || data.stats.safetyRecord}</div>
+                            <div class="text-[10px] text-emerald-400 mt-1">Compliance Standard</div>
+                        </div>
+                    </div>
+
+                    <!-- Projects & Management Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-base font-bold text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-indigo-400"></i>Daftar Aktivitas & Spesifikasi Layanan</h3>
+                                <span class="text-xs text-slate-400">${data.projects.length} Item Catatan</span>
+                            </div>
+                            <div class="overflow-x-auto custom-scrollbar">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                                        <tr>
+                                            <th class="p-3">Keterangan / Aktivitas</th>
+                                            <th class="p-3">Lokasi / Cakupan</th>
+                                            <th class="p-3">Detail Spesifikasi</th>
+                                            <th class="p-3">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/60">
+                                        ${data.projects.map(p => `
+                                            <tr class="hover:bg-slate-800/40 transition">
+                                                <td class="p-3 font-semibold text-white">${p.name}</td>
+                                                <td class="p-3 text-slate-300">${p.location}</td>
+                                                <td class="p-3 text-slate-300 font-mono">${p.capacity}</td>
+                                                <td class="p-3">
+                                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">${p.status}</span>
+                                                </td>
+                                            </tr>
+                                        `).join('')}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
+                            <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-user-tie text-indigo-400"></i>Dewan Direksi</h3>
+                            <div class="space-y-4">
+                                ${data.leaders.map(l => `
+                                    <div class="flex items-center space-x-3 p-3 rounded-2xl bg-slate-950 border border-slate-800/80">
+                                        <img src="${l.photo}" alt="${l.name}" class="w-12 h-12 rounded-xl object-cover border border-slate-700">
+                                        <div>
+                                            <h4 class="text-xs font-bold text-white">${l.name}</h4>
+                                            <p class="text-[11px] text-slate-400">${l.role}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Milestones & Contact Footer Card -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8">
+                            <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-trophy text-amber-400"></i>Milestone & Catatan Operasional</h3>
+                            <div class="relative border-l border-slate-800 ml-3 space-y-5">
+                                ${data.milestones.map(m => `
+                                    <div class="pl-5 relative">
+                                        <div class="absolute -left-1.5 top-1 w-3 h-3 rounded-full ${accentBg} border-2 border-slate-900"></div>
+                                        <span class="text-xs font-bold ${accentText}">${m.year}</span>
+                                        <p class="text-xs text-slate-300 mt-0.5 leading-relaxed">${m.text}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 flex flex-col justify-between">
+                            <div>
+                                <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2"><i class="fa-solid fa-building text-blue-400"></i>Informasi Kantor Pusat</h3>
+                                <div class="space-y-3.5 text-xs text-slate-300">
+                                    <p class="flex items-start space-x-2.5">
+                                        <i class="fa-solid fa-map-marker-alt text-rose-500 mt-0.5 w-4"></i>
+                                        <span>${data.contact.address}</span>
+                                    </p>
+                                    <p class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-envelope text-blue-400 w-4"></i>
+                                        <span>${data.contact.email}</span>
+                                    </p>
+                                    <p class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-phone text-emerald-400 w-4"></i>
+                                        <span>${data.contact.phone}</span>
+                                    </p>
+                                    <p class="flex items-center space-x-2.5">
+                                        <i class="fa-solid fa-globe text-indigo-400 w-4"></i>
+                                        <span>${data.contact.website}</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="mt-8 pt-4 border-t border-slate-800 text-[11px] text-slate-500 flex justify-between items-center">
+                                <span>PT Validated Corporate Entity</span>
+                                <span class="text-emerald-400 font-semibold"><i class="fa-solid fa-shield-halved mr-1"></i> Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.onload = function() {
+            renderNav();
+            renderAuthUI();
+            renderContent();
+        };
+    </script>
+</body>
+</html>
